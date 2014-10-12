@@ -2,6 +2,7 @@ package com.overlo4ded.fol.reader.gui;
 
 import java.awt.EventQueue;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -22,11 +23,17 @@ import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JProgressBar;
 
+import org.apache.commons.io.IOUtils;
+
 import com.overlo4ded.fol.reader.ParserListener;
 import com.overlo4ded.fol.reader.Reader;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class SwingUI implements ParserListener{
 
@@ -119,7 +126,22 @@ public class SwingUI implements ParserListener{
 		btnRun.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				reader.read(txtFolUrl.getText(),txtLastPage.getText());
+				String data = reader.read(txtFolUrl.getText(),txtLastPage.getText());
+				final JFileChooser fc = new JFileChooser();
+				
+				int returnVal = fc.showOpenDialog(null);
+
+		        if (returnVal == JFileChooser.APPROVE_OPTION) {
+		            File file = fc.getSelectedFile();
+		            try {
+						IOUtils.write(data,new FileOutputStream(file));
+					} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+		        } else {
+		        }
 			}
 		});
 		GridBagConstraints gbc_btnRun = new GridBagConstraints();

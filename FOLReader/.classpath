@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="lib/httpclient-cache-4.3.5.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.3.2.jar"/>
 	<classpathentry kind="lib" path="lib/httpmime-4.3.5.jar"/>
+	<classpathentry kind="lib" path="lib/htmlcleaner-2.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

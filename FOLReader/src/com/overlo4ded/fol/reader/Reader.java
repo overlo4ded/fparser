@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -15,7 +16,7 @@ public class Reader {
 	
 	private List<ParserListener> parserListeners=new ArrayList<ParserListener>();
 	
-	public void read(String url, String endpage){
+	public String read(String url, String endpage){
 		
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpResponse resp = null;
@@ -26,9 +27,13 @@ public class Reader {
 		String numpage = partial.substring(partial.indexOf("-")+1);
 		System.out.println(numpage);
 		int inumpage = Integer.parseInt(numpage);
-		int iendpage = Integer.parseInt(endpage);
+		int iendpage = inumpage;
+		if(StringUtils.isNotEmpty(endpage)){
+			iendpage=Integer.parseInt(endpage);
+		}
 		this.sendComputedIterations(inumpage, iendpage);
 		String baseurl = url.substring(0,url.indexOf(numpage));
+		StringBuffer sb = new StringBuffer("<messages>");
 		while(inumpage<=iendpage){
 			String newurl = baseurl+inumpage+".html";
 			System.out.println("processing....:"+inumpage);
@@ -38,9 +43,9 @@ public class Reader {
 				String res = EntityUtils.toString(resp.getEntity());
 				PageParser parser = new PageParser();
 				parser.addParserListeners(parserListeners);
-				List<Message> messages = parser.parse(res);
+				List<Message> messages = parser.parse(url,res);
 				for(Message m:messages){
-					System.out.println(m.toString());
+					sb.append(m.toString());
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -52,6 +57,9 @@ public class Reader {
 			}
 			inumpage++;
 		}
+		sb.append("</messages>").append("\n");
+		//System.out.println(sb.toString());
+		return sb.toString();
 	}
 	
 	public void addParserListener(ParserListener p){
